@@ -1,4 +1,12 @@
-use mongodb::{options::ClientOptions, Client};
+use std::thread::current;
+
+use mongodb::{
+    bson::{doc, Document},
+    error::Error,
+    options::ClientOptions,
+    Client, Collection,
+};
+use rocket::futures::StreamExt;
 
 pub struct Manager {
     client: mongodb::Client,
@@ -9,18 +17,24 @@ impl Manager {
     pub async fn new(mongodb_url: &str) -> Result<Manager, mongodb::error::Error> {
         println!("Start connecting the mongodb server");
         let mut client_options = ClientOptions::parse(mongodb_url).await?;
-        client_options.app_name = Some("pinia-database".to_string());
-        // how can i change the Result to the ClientOptions?
+        client_options.app_name = Some("test".to_string());
         let client = Client::with_options(client_options)?;
-        let database = client.database("picnia-database");
-        // List the names of the databases in that deployment.
-        for db_name in client.list_database_names(None, None).await? {
-            println!("{}", db_name);
-        }
+        let database = client.database("test");
         Ok(Manager { client, database })
     }
+
     pub async fn test(&self) {
-        println!("the test function!");
+        let collection: Collection<Document> = self.database.collection("users");
+        let user = collection
+            .find_one(doc! {"name":"NenoSan"}, None)
+            .await
+            .unwrap();
+        match user {
+            Some(user) => {
+                println!("{:?}", user);
+            }
+            None => println!("User not found"),
+        }
     }
 }
 

@@ -32,8 +32,10 @@
 //     rocket::build().mount("/", routes![world, delay, hello])
 // }
 use mongodb_manager::Manager;
+use std::env;
 #[tokio::main]
 async fn main() {
-    let mongo_instance = Manager::new("mongodb://localhost:27017").await.unwrap();
+    let mongo_url = env::var_os("MONGODB_URL").unwrap();
+    let mongo_instance = Manager::new(mongo_url.to_str().unwrap()).await.unwrap();
     mongo_instance.test().await;
 }
