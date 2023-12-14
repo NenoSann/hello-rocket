@@ -34,6 +34,6 @@
 use mongodb_manager::Manager;
 #[tokio::main]
 async fn main() {
-    let mongo_instance = Manager::new("mongodb://localhost:47017").await;
-    // Use mongo_instance for further operations
+    let mongo_instance = Manager::new("mongodb://localhost:27017").await.unwrap();
+    mongo_instance.test().await;
 }
