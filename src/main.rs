@@ -37,5 +37,4 @@ use std::env;
 async fn main() {
     let mongo_url = env::var_os("MONGODB_URL").unwrap();
     let mongo_instance = Manager::new(mongo_url.to_str().unwrap()).await.unwrap();
-    mongo_instance.test().await;
 }
